@@ -5,18 +5,94 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #1e1e1e;
+            color: #ffffff;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
 
+        /* Greeting message */
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+        }
+
+        /* Section titles */
+        h3 {
+            font-size: 1.8rem;
+            margin-top: 20px;
+            color: #f0db4f;
+        }
+
+        /* Info boxes */
+        #clock, #visitorcount {
+            font-size: 2.5rem;
+            font-weight: bold;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px 30px;
+            border-radius: 10px;
+            display: inline-block;
+            margin-top: 10px;
+            min-width: 180px;
+        }
+
+        /* Add a slight glow effect */
+        #clock {
+            border: 2px solid #4CAF50;
+            box-shadow: 0 0 10px #4CAF50;
+        }
+
+        #visitorcount {
+            border: 2px solid #f0db4f;
+            box-shadow: 0 0 10px #f0db4f;
+        }
     </style>
 </head>
 <body>
-    <p id="greeting"></p>
+    <h1 id="greeting"></h1>
+
+    <h3>Live Clock:</h3>
+    <div id="clock">Loading...</div>
+
+    <h3>Visitors in the last hour:</h3>
+    <div id="visitorcount">Loading...</div>
 </body>
 <script>
+    updateVisitorCount();
+    updateClock();
+
     fetch('/greeting')
         .then((response) => response.json())
         .then((result) => {
-            const visitorcounts = document.getElementById('greeting');
+            const greeting = document.getElementById('greeting');
             greeting.textContent = result.data;
-            })
+            });
+
+    function updateClock() {
+        const now = new Date();
+        document.getElementById("clock").textContent = now.toLocaleTimeString("da-DK", { hour12: false });
+        }
+    
+    function updateVisitorCount() {
+        fetch('/visitorcount')
+            .then((response) => response.json())
+            .then((result) => {
+                const visitorcount = document.getElementById('visitorcount');
+                visitorcount.textContent = result.data;
+            });
+        }
+    
+    setInterval(updateVisitorCount, 60000)
+    setInterval(updateClock, 1000);
+        
+
 </script>
 </html>
