@@ -3,17 +3,16 @@ const app = express();
 
 const PORT = 8080;
 
-const date = new Date()
-
 let visitorTimestamps = [];
 
 
 app.get("/", (req, res) => {
+    visitorTimestamps.push(Date.now());
     res.sendFile(__dirname + "/public/frontpage.html");
 })
 
 app.get("/greeting", (req, res) => {
-    const hour = date.getHours();
+    const hour = new Date().getHours();
     let greeting;
 
     if (hour >= 5 && hour < 12) {
@@ -30,9 +29,7 @@ app.get("/greeting", (req, res) => {
 })
 
 app.get("/visitorcount", (req, res) => {
-    const now = Date.now();
-    visitorTimestamps.push(now);
-
+    const now = new Date()
     visitorTimestamps = visitorTimestamps.filter(timestamp => now - timestamp <= 3600000);
 
     res.send({ data : visitorTimestamps.length })
