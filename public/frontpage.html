@@ -1,98 +1,241 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Roboto', sans-serif;
             text-align: center;
-            background-color: #1e1e1e;
-            color: #ffffff;
             margin: 0;
             padding: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
+            color: #f4f4f4;
+            background: linear-gradient(45deg, 
+                #2e0249, /* Dark purple */
+                #6a0dad, /* Dark violet */
+                #ff0000, /* Dark red */
+                #ff8c00, /* Dark orange */
+                #32cd32, /* Dark green */
+                #1e90ff, /* Dark blue */
+                #4b0082, /* Indigo */
+                #9400d3  /* Dark violet */
+            );
+            background-size: 400% 400%;
+            animation: pulseBackground 10s ease infinite;
         }
-
-        /* Greeting message */
+    
+        /* Title styling */
         h1 {
-            font-size: 2.5rem;
-            margin-bottom: 20px;
-        }
-
-        /* Section titles */
-        h3 {
-            font-size: 1.8rem;
+            color: #f4f4f4;
             margin-top: 20px;
-            color: #f0db4f;
-        }
-
-        /* Info boxes */
-        #clock, #visitorcount {
             font-size: 2.5rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            transition: color 0.3s;
+        }
+
+        h3 {
+            color: #333;
+        }
+    
+        h1:hover {
+            color: #3b82f6;
+        }
+    
+        /* Timer grid layout */
+        #timer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+            animation: fadeIn 1s ease-out;
+        }
+    
+        /* Individual timer box styling */
+        .timer {
+            background-color: #ffffff;
+            border: 2px solid #4caf50;
+            border-radius: 15px;
+            padding: 25px;
+            font-size: 1.2rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+            text-align: center;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+            background: linear-gradient(145deg, #ffffff, #f0f0f0);
+        }
+    
+        .timer:hover {
+            background-color: #e6e6e6;
+            transform: translateY(-5px);
+            border-color: #3b82f6;
+        }
+    
+        .timer div {
+            font-size: 2rem;
             font-weight: bold;
-            background: rgba(255, 255, 255, 0.1);
-            padding: 15px 30px;
-            border-radius: 10px;
-            display: inline-block;
-            margin-top: 10px;
-            min-width: 180px;
+            color: #333;
+            transition: color 0.3s ease, text-shadow 0.3s ease;
         }
-
-        /* Add a slight glow effect */
-        #clock {
-            border: 2px solid #4CAF50;
-            box-shadow: 0 0 10px #4CAF50;
+    
+        /* Responsive design */
+        @media (max-width: 768px) {
+            #timer-grid {
+                grid-template-columns: 1fr 1fr;
+            }
         }
-
-        #visitorcount {
-            border: 2px solid #f0db4f;
-            box-shadow: 0 0 10px #f0db4f;
+    
+        @media (max-width: 480px) {
+            #timer-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    
+        /* Keyframe animation for background pulsating effect */
+        @keyframes pulseBackground {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+    
+        /* Keyframe animation for fade-in effect */
+        @keyframes fadeIn {
+            0% {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
     </style>
 </head>
+
 <body>
     <h1 id="greeting"></h1>
+    <div id="timer-grid">
 
-    <h3>Live Clock:</h3>
-    <div id="clock">Loading...</div>
-
-    <h3>Visitors in the last hour:</h3>
-    <div id="visitorcount">Loading...</div>
+        <div class="timer">
+            <h3>Live Clock⏰:</h3>
+            <div id="clock">Loading...</div>
+        </div>
+        <div class="timer">
+            <h3>Time spent on page:</h3>
+            <div id="time-spent">Loading...</div>
+        </div>
+        <div class="timer">
+            <h3>Time Until Christmas🎅🏻:</h3>
+            <div id="christmas-countdown">Loading...</div>
+        </div>
+        <div class="timer">
+            <h3>Time Until New Year’s Eve🎆:</h3>
+            <div id="newyear-countdown">Loading...</div>
+        </div>
+        <div class="timer">
+            <h3>Current Day of the Week📅:</h3>
+            <div id="current-day">Loading...</div>
+        </div>
+        <div class="timer">
+            <h3>Er det fredag?</h3>
+            <div id="is-it-friday">Loading...</div>
+        </div>
+        <div class="timer">
+            <h3>Time Until Mathildes Birthday:</h3>
+            <div id="mathilde-birthday">Loading...</div>
+        </div>
+        <div class="timer">
+            <h3>(BUGGED) Visitors in the last hour:</h3>
+            <div id="visitorcount">Loading...</div>
+        </div>
+    </div>
 </body>
 <script>
-    updateVisitorCount();
-    updateClock();
+    let startTime = Date.now();
 
-    fetch('/greeting')
-        .then((response) => response.json())
-        .then((result) => {
-            const greeting = document.getElementById('greeting');
-            greeting.textContent = result.data;
+    const greetingElement = document.getElementById('greeting');
+    const visitorCountElement = document.getElementById('visitorcount');
+    const clockElement = document.getElementById("clock");
+    const currentDayElement = document.getElementById("current-day");
+    const isItFridayElement = document.getElementById("is-it-friday");
+    const newYearCountdownElement = document.getElementById("newyear-countdown");
+    const christmasCountdownElement = document.getElementById("christmas-countdown");
+    const timeSpentElement = document.getElementById('time-spent');
+    const mathildeBirthdayElement = document.getElementById('mathilde-birthday');
+
+    function fetchData() {
+        Promise.all([
+            fetch('/greeting').then(response => response.json()),
+            fetch('/visitorcount').then(response => response.json())
+        ])
+            .then(([greetingData, visitorCountData]) => {
+                greetingElement.textContent = greetingData.data;
+                visitorCountElement.textContent = visitorCountData.data;
             });
+    }
 
-    function updateClock() {
+    function updateClock(now) {
+        clockElement.textContent = now.toLocaleTimeString("da-DK", { hour12: false });
+    }
+
+    function updateCurrentDay(now) {
+        currentDayElement.textContent = now.toLocaleString("da-DK", { weekday: 'long' });
+    }
+
+    function updateIsItFriday(now) {
+        const day = now.toLocaleString("da-DK", { weekday: 'long' });
+        isItFridayElement.textContent = (day === 'fredag' ? "Ja" : "Nej");
+    }
+
+    function updateCountdowns(now) {
+        const christmas = new Date("2025-12-23T23:59:59").getTime();
+        const newYearsEve = new Date("2025-12-31T23:59:59").getTime();
+        const mathildeBirthday = new Date("2025-09-13T23:59:59").getTime();
+
+        const updateCountdown = (targetDate, element) => {
+            const timeLeft = targetDate - now;
+            const days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
+            element.textContent = `${days}d ${hours}h ${minutes}m ${seconds}s`;
+        }
+
+        updateCountdown(christmas, christmasCountdownElement);
+        updateCountdown(newYearsEve, newYearCountdownElement);
+        updateCountdown(mathildeBirthday, mathildeBirthdayElement);
+    }
+
+    function updateTimeSpent() {
+        const elapsedTime = Date.now() - startTime;
+        let seconds = Math.floor(elapsedTime / 1000);
+        const minutes = Math.floor(seconds / 60);
+        seconds %= 60;
+        timeSpentElement.innerText = `${minutes}m ${seconds}s`;
+    }
+
+    function updateClocks() {
         const now = new Date();
-        document.getElementById("clock").textContent = now.toLocaleTimeString("da-DK", { hour12: false });
-        }
-    
-    function updateVisitorCount() {
-        fetch('/visitorcount')
-            .then((response) => response.json())
-            .then((result) => {
-                const visitorcount = document.getElementById('visitorcount');
-                visitorcount.textContent = result.data;
-            });
-        }
-    
-    setInterval(updateVisitorCount, 60000)
-    setInterval(updateClock, 1000);
-        
+        updateClock(now);
+        updateCurrentDay(now);
+        updateIsItFriday(now);
+        updateCountdowns(now);
+        updateTimeSpent();
+    }
 
+    fetchData();
+
+    setInterval(updateClocks, 1000);
 </script>
+
 </html>
